@@ -57,6 +57,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        agrimove: {
+          purple: "hsl(var(--agrimove-purple))",
+          "purple-light": "hsl(var(--agrimove-purple-light))",
+          pink: "hsl(var(--agrimove-pink))",
+          "pink-light": "hsl(var(--agrimove-pink-light))",
+          yellow: "hsl(var(--agrimove-yellow))",
+          green: "hsl(var(--agrimove-green))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
