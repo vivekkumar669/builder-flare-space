@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
 import FarmerDashboard from "./pages/FarmerDashboard";
 import TruckerDashboard from "./pages/TruckerDashboard";
+import FarmerRequests from "./pages/FarmerRequests";
 import Placeholder from "./pages/Placeholder";
 import NotFound from "./pages/NotFound";
 
