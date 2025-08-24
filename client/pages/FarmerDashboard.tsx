@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useState } from "react";
 import { 
-  BarChart3, 
-  TrendingUp, 
-  TrendingDown, 
-  Users, 
-  Truck, 
-  MapPin, 
-  Clock, 
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Users,
+  Truck,
+  MapPin,
+  Clock,
   IndianRupee,
   Package,
   Leaf,
@@ -20,7 +20,10 @@ import {
   MessageSquare,
   LogOut,
   Mail,
-  X
+  X,
+  Plus,
+  Send,
+  ArrowRight
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
