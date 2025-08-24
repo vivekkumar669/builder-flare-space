@@ -63,7 +63,7 @@ function AppRoutes() {
         path="/farmer-requests"
         element={
           <ProtectedRoute allowedRole="farmer">
-            <Placeholder />
+            <FarmerRequests />
           </ProtectedRoute>
         }
       />
