@@ -78,11 +78,15 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function FarmerDashboard() {
-  const { user, logout, messages, markMessageAsRead } = useAuth();
+  const { user, logout, messages, markMessageAsRead, farmerRequests } = useAuth();
   const navigate = useNavigate();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
 
   const unreadMessages = messages.filter(msg => !msg.read && msg.to === user?.id);
+  const myRequests = farmerRequests.filter(req => req.farmerId === user?.id);
+  const pendingRequests = myRequests.filter(req => req.status === 'pending');
+  const completedRequests = myRequests.filter(req => req.status === 'delivered');
+  const recentRequests = myRequests.slice(0, 3); // Show latest 3 requests
 
   const sidebarItems = [
     { icon: Home, label: "Dashboard", href: "/farmer-dashboard" },
