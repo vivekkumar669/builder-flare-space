@@ -198,60 +198,108 @@ export default function FarmerDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">My Requests</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Requests</CardTitle>
                   <Package className="w-4 h-4 text-agrimove-purple" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-purple">12</div>
+                  <div className="text-2xl font-bold text-agrimove-purple">{myRequests.length}</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
-                    3 active requests
+                    {pendingRequests.length} pending requests
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Completed Trips</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Completed Deliveries</CardTitle>
                   <Truck className="w-4 h-4 text-agrimove-pink" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-pink">47</div>
+                  <div className="text-2xl font-bold text-agrimove-pink">{completedRequests.length}</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
-                    +15% this month
+                    Successful transports
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Cost Saved</CardTitle>
-                  <IndianRupee className="w-4 h-4 text-agrimove-green" />
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Messages</CardTitle>
+                  <Mail className="w-4 h-4 text-agrimove-green" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-green">₹28,450</div>
+                  <div className="text-2xl font-bold text-agrimove-green">{messages.length}</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
-                    25% cost reduction
+                    {unreadMessages.length} unread messages
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Avg Delivery Time</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Account Status</CardTitle>
                   <Clock className="w-4 h-4 text-agrimove-yellow" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-yellow">3.8h</div>
+                  <div className="text-2xl font-bold text-agrimove-yellow">Active</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                    <TrendingDown className="w-3 h-3 text-agrimove-green" />
-                    20% faster delivery
+                    <TrendingUp className="w-3 h-3 text-agrimove-green" />
+                    All systems ready
                   </p>
                 </CardContent>
               </Card>
             </div>
+
+            {/* Quick Actions Card */}
+            <Card className="border-agrimove-green/20 bg-gradient-to-r from-agrimove-green/5 to-agrimove-purple/5 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Send className="w-5 h-5 text-agrimove-green" />
+                  Need Transport for Your Produce?
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Submit a new transport request to connect with available truckers in your area.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    onClick={() => navigate('/farmer-requests')}
+                    className="flex-1 bg-gradient-to-r from-agrimove-green to-agrimove-green/80 hover:from-agrimove-green/90 hover:to-agrimove-green/70 text-white"
+                    size="lg"
+                  >
+                    <Plus className="w-5 h-5 mr-2" />
+                    Submit New Request
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/farmer-requests')}
+                    className="flex-1 border-agrimove-green/30 hover:bg-agrimove-green/5"
+                    size="lg"
+                  >
+                    <Package className="w-5 h-5 mr-2" />
+                    View My Requests
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-agrimove-green rounded-full"></div>
+                    <span>Quick farmer-trucker matching</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-agrimove-purple rounded-full"></div>
+                    <span>Competitive pricing</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-agrimove-pink rounded-full"></div>
+                    <span>Real-time tracking</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Charts Section - Same as before but smaller */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
