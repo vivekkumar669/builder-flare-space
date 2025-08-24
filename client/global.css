@@ -54,6 +54,14 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* AgriMove Brand Colors */
+    --agrimove-purple: 258 77% 35%;
+    --agrimove-purple-light: 258 50% 85%;
+    --agrimove-pink: 316 73% 52%;
+    --agrimove-pink-light: 316 50% 90%;
+    --agrimove-yellow: 45 93% 58%;
+    --agrimove-green: 142 76% 36%;
   }
 
   .dark {
@@ -92,6 +100,14 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* AgriMove Brand Colors - Dark Mode */
+    --agrimove-purple: 258 77% 45%;
+    --agrimove-purple-light: 258 30% 25%;
+    --agrimove-pink: 316 73% 62%;
+    --agrimove-pink-light: 316 30% 25%;
+    --agrimove-yellow: 45 93% 68%;
+    --agrimove-green: 142 76% 46%;
   }
 }
 
