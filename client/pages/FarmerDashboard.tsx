@@ -344,50 +344,86 @@ export default function FarmerDashboard() {
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-agrimove-pink" />
-                    Recent Messages
+                    <Package className="w-5 h-5 text-agrimove-pink" />
+                    Recent Transport Requests
                   </CardTitle>
                   <CardDescription>
-                    Latest notifications from truckers
+                    Your latest transport requests and their status
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 h-[250px] overflow-y-auto">
-                    {messages.length === 0 ? (
+                    {recentRequests.length === 0 ? (
                       <div className="flex items-center justify-center h-full text-muted-foreground">
                         <div className="text-center">
-                          <Mail className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                          <p>No messages yet</p>
+                          <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm mb-2">No requests yet</p>
+                          <Button
+                            size="sm"
+                            onClick={() => navigate('/farmer-requests')}
+                            className="bg-agrimove-green hover:bg-agrimove-green/90 text-white"
+                          >
+                            <Plus className="w-3 h-3 mr-1" />
+                            Submit Request
+                          </Button>
                         </div>
                       </div>
                     ) : (
-                      messages.slice(0, 3).map((message) => (
-                        <div 
-                          key={message.id} 
-                          className={`p-3 rounded-lg border ${
-                            message.read 
-                              ? 'bg-muted/30 border-border' 
-                              : 'bg-agrimove-purple/5 border-agrimove-purple/20'
-                          }`}
+                      recentRequests.map((request) => (
+                        <div
+                          key={request.id}
+                          className="p-3 rounded-lg border border-agrimove-purple/10 bg-background/50 hover:bg-background/80 transition-colors cursor-pointer"
+                          onClick={() => navigate('/farmer-requests')}
                         >
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="outline" className="text-xs">
-                              From {message.fromRole}
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 bg-agrimove-green/20 rounded-lg flex items-center justify-center">
+                                <Package className="w-4 h-4 text-agrimove-green" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">{request.cargoType}</p>
+                                <p className="text-xs text-muted-foreground">{request.weight} kg</p>
+                              </div>
+                            </div>
+                            <Badge
+                              className={`text-xs ${
+                                request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
+                                request.status === 'accepted' ? 'bg-blue-100 text-blue-800 border-blue-300' :
+                                request.status === 'delivered' ? 'bg-green-100 text-green-800 border-green-300' :
+                                'bg-gray-100 text-gray-800 border-gray-300'
+                              }`}
+                            >
+                              {request.status.toUpperCase()}
                             </Badge>
-                            {!message.read && (
-                              <Badge className="bg-agrimove-pink text-white text-xs">New</Badge>
-                            )}
                           </div>
-                          <p className="text-sm">{message.content}</p>
-                          {message.ratePerKm && (
-                            <div className="mt-2 text-xs text-muted-foreground">
-                              Rate: ₹{message.ratePerKm}/km • ETA: {message.estimatedTime}
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <MapPin className="w-3 h-3" />
+                            <span className="truncate">{request.pickupPoint}</span>
+                            <ArrowRight className="w-3 h-3" />
+                            <span className="truncate">{request.destination}</span>
+                          </div>
+                          {request.truckerName && (
+                            <div className="mt-2 text-xs text-agrimove-green">
+                              Accepted by: {request.truckerName}
                             </div>
                           )}
                         </div>
                       ))
                     )}
                   </div>
+                  {recentRequests.length > 0 && (
+                    <div className="mt-4 text-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/farmer-requests')}
+                        className="border-agrimove-purple/20 hover:bg-agrimove-purple/5"
+                      >
+                        View All Requests
+                        <ArrowRight className="w-3 h-3 ml-1" />
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
