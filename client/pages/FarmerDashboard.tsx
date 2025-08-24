@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { 
   BarChart3, 
   TrendingUp, 
@@ -15,7 +16,11 @@ import {
   Home,
   Route,
   BarChart2,
-  Bell
+  Bell,
+  MessageSquare,
+  LogOut,
+  Mail,
+  X
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
@@ -24,6 +29,10 @@ import { AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, X
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // Sample data for charts
 const impactData = [
@@ -65,17 +74,27 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const sidebarItems = [
-  { icon: Home, label: "Dashboard", href: "/" },
-  { icon: Truck, label: "Transport", href: "/transport" },
-  { icon: Route, label: "Routes", href: "/routes" },
-  { icon: BarChart2, label: "Analytics", href: "/analytics" },
-  { icon: Users, label: "Farmers", href: "/farmers" },
-  { icon: Package, label: "Shipments", href: "/shipments" },
-  { icon: Settings, label: "Settings", href: "/settings" },
-];
+export default function FarmerDashboard() {
+  const { user, logout, messages, markMessageAsRead } = useAuth();
+  const navigate = useNavigate();
+  const [isInboxOpen, setIsInboxOpen] = useState(false);
 
-export default function Dashboard() {
+  const unreadMessages = messages.filter(msg => !msg.read && msg.to === user?.id);
+
+  const sidebarItems = [
+    { icon: Home, label: "Dashboard", href: "/farmer-dashboard" },
+    { icon: Truck, label: "My Requests", href: "/farmer-requests" },
+    { icon: Route, label: "Track Shipments", href: "/track-shipments" },
+    { icon: BarChart2, label: "Analytics", href: "/farmer-analytics" },
+    { icon: MessageSquare, label: "Inbox", action: () => setIsInboxOpen(true) },
+    { icon: Settings, label: "Settings", href: "/farmer-settings" },
+  ];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gradient-to-br from-agrimove-purple-light via-background to-agrimove-pink-light">
@@ -83,13 +102,13 @@ export default function Dashboard() {
           <SidebarHeader className="border-b border-agrimove-purple/20 p-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-agrimove-purple to-agrimove-pink rounded-lg flex items-center justify-center">
-                <Truck className="w-5 h-5 text-white" />
+                <Leaf className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-agrimove-purple to-agrimove-pink bg-clip-text text-transparent">
                   AgriMove
                 </h1>
-                <p className="text-xs text-muted-foreground">Smart Transport Network</p>
+                <p className="text-xs text-muted-foreground">Farmer Dashboard</p>
               </div>
             </div>
           </SidebarHeader>
@@ -98,17 +117,39 @@ export default function Dashboard() {
               {sidebarItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton 
-                    asChild 
-                    className="w-full justify-start gap-3 hover:bg-agrimove-purple/10 data-[active=true]:bg-agrimove-purple/20 data-[active=true]:text-agrimove-purple"
-                    isActive={item.href === "/"}
+                    asChild={!item.action}
+                    className="w-full justify-start gap-3 hover:bg-agrimove-purple/10 data-[active=true]:bg-agrimove-purple/20 data-[active=true]:text-agrimove-purple relative"
+                    isActive={item.href === "/farmer-dashboard"}
+                    onClick={item.action}
                   >
-                    <a href={item.href}>
-                      <item.icon className="w-4 h-4" />
-                      <span>{item.label}</span>
-                    </a>
+                    {item.action ? (
+                      <div className="flex items-center gap-3 cursor-pointer">
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                        {item.label === "Inbox" && unreadMessages.length > 0 && (
+                          <Badge className="ml-auto bg-agrimove-pink text-white">
+                            {unreadMessages.length}
+                          </Badge>
+                        )}
+                      </div>
+                    ) : (
+                      <a href={item.href}>
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </a>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  className="w-full justify-start gap-3 hover:bg-red-50 text-red-600 hover:text-red-700"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
@@ -118,15 +159,29 @@ export default function Dashboard() {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="flex items-center gap-2 flex-1">
-              <h2 className="text-lg font-semibold">Dashboard Overview</h2>
-              <Badge variant="secondary" className="bg-agrimove-purple/10 text-agrimove-purple border-agrimove-purple/20">
-                Live
+              <h2 className="text-lg font-semibold">Farmer Dashboard</h2>
+              <Badge variant="secondary" className="bg-agrimove-green/10 text-agrimove-green border-agrimove-green/20">
+                Welcome, {user?.name}
               </Badge>
             </div>
             <div className="flex items-center gap-2">
-              <Bell className="w-4 h-4 text-muted-foreground" />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="relative"
+                onClick={() => setIsInboxOpen(true)}
+              >
+                <Mail className="w-4 h-4" />
+                {unreadMessages.length > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 bg-agrimove-pink text-white text-xs flex items-center justify-center">
+                    {unreadMessages.length}
+                  </Badge>
+                )}
+              </Button>
               <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-agrimove-purple text-white text-xs">AD</AvatarFallback>
+                <AvatarFallback className="bg-agrimove-green text-white text-xs">
+                  {user?.name?.split(' ').map(n => n[0]).join('') || 'F'}
+                </AvatarFallback>
               </Avatar>
             </div>
           </header>
@@ -136,42 +191,42 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Active Farmers</CardTitle>
-                  <Users className="w-4 h-4 text-agrimove-purple" />
+                  <CardTitle className="text-sm font-medium text-muted-foreground">My Requests</CardTitle>
+                  <Package className="w-4 h-4 text-agrimove-purple" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-purple">2,847</div>
+                  <div className="text-2xl font-bold text-agrimove-purple">12</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
-                    +12.5% from last month
+                    3 active requests
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Active Trucks</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Completed Trips</CardTitle>
                   <Truck className="w-4 h-4 text-agrimove-pink" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-pink">1,243</div>
+                  <div className="text-2xl font-bold text-agrimove-pink">47</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
-                    +8.2% from last month
+                    +15% this month
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Revenue</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Cost Saved</CardTitle>
                   <IndianRupee className="w-4 h-4 text-agrimove-green" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-green">₹1.25L</div>
+                  <div className="text-2xl font-bold text-agrimove-green">₹28,450</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
-                    +25.4% from last month
+                    25% cost reduction
                   </p>
                 </CardContent>
               </Card>
@@ -182,32 +237,31 @@ export default function Dashboard() {
                   <Clock className="w-4 h-4 text-agrimove-yellow" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-yellow">4.2h</div>
+                  <div className="text-2xl font-bold text-agrimove-yellow">3.8h</div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingDown className="w-3 h-3 text-agrimove-green" />
-                    -15.3% faster delivery
+                    20% faster delivery
                   </p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Charts Section */}
+            {/* Charts Section - Same as before but smaller */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Impact Metrics Chart */}
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Activity className="w-5 h-5 text-agrimove-purple" />
-                    Impact Metrics
+                    My Transport Analytics
                   </CardTitle>
                   <CardDescription>
-                    Progress towards our improvement targets
+                    Your farming transport efficiency metrics
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[300px]">
+                  <ChartContainer config={chartConfig} className="h-[250px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={impactData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <BarChart data={impactData.slice(0, 3)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                         <XAxis 
                           dataKey="metric" 
@@ -225,182 +279,126 @@ export default function Dashboard() {
                             borderRadius: "8px"
                           }}
                         />
-                        <Bar dataKey="value" fill="hsl(var(--agrimove-purple))" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="target" fill="hsl(var(--agrimove-pink))" radius={[4, 4, 0, 0]} opacity={0.3} />
+                        <Bar dataKey="value" fill="hsl(var(--agrimove-green))" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
                 </CardContent>
               </Card>
 
-              {/* Monthly Growth */}
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-agrimove-green" />
-                    Monthly Growth
+                    <MessageSquare className="w-5 h-5 text-agrimove-pink" />
+                    Recent Messages
                   </CardTitle>
                   <CardDescription>
-                    Farmers, trips, and revenue trends
+                    Latest notifications from truckers
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                        <XAxis 
-                          dataKey="month" 
-                          stroke="hsl(var(--muted-foreground))"
-                          tick={{ fontSize: 12 }}
-                        />
-                        <YAxis 
-                          stroke="hsl(var(--muted-foreground))"
-                          tick={{ fontSize: 12 }}
-                        />
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: "hsl(var(--background))", 
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px"
-                          }}
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="farmers" 
-                          stroke="hsl(var(--agrimove-purple))" 
-                          strokeWidth={3}
-                          dot={{ fill: "hsl(var(--agrimove-purple))", strokeWidth: 2, r: 4 }}
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="trips" 
-                          stroke="hsl(var(--agrimove-pink))" 
-                          strokeWidth={3}
-                          dot={{ fill: "hsl(var(--agrimove-pink))", strokeWidth: 2, r: 4 }}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
+                  <div className="space-y-3 h-[250px] overflow-y-auto">
+                    {messages.length === 0 ? (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        <div className="text-center">
+                          <Mail className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                          <p>No messages yet</p>
+                        </div>
+                      </div>
+                    ) : (
+                      messages.slice(0, 3).map((message) => (
+                        <div 
+                          key={message.id} 
+                          className={`p-3 rounded-lg border ${
+                            message.read 
+                              ? 'bg-muted/30 border-border' 
+                              : 'bg-agrimove-purple/5 border-agrimove-purple/20'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge variant="outline" className="text-xs">
+                              From {message.fromRole}
+                            </Badge>
+                            {!message.read && (
+                              <Badge className="bg-agrimove-pink text-white text-xs">New</Badge>
+                            )}
+                          </div>
+                          <p className="text-sm">{message.content}</p>
+                          {message.ratePerKm && (
+                            <div className="mt-2 text-xs text-muted-foreground">
+                              Rate: ₹{message.ratePerKm}/km • ETA: {message.estimatedTime}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </div>
-
-            {/* Regional Distribution */}
-            <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-agrimove-purple" />
-                  Regional Distribution of Farmers
-                </CardTitle>
-                <CardDescription>
-                  Farmer registration by state
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartContainer config={chartConfig} className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={regionData}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={100}
-                          dataKey="farmers"
-                          label={({ region, farmers }) => `${region}: ${farmers}`}
-                        >
-                          {regionData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: "hsl(var(--background))", 
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px"
-                          }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
-                  
-                  <div className="space-y-4">
-                    {regionData.map((region, index) => (
-                      <div key={region.region} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <div 
-                            className="w-4 h-4 rounded-full" 
-                            style={{ backgroundColor: region.color }}
-                          />
-                          <span className="font-medium">{region.region}</span>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">{region.farmers}</div>
-                          <div className="text-xs text-muted-foreground">farmers</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity */}
-            <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-agrimove-purple" />
-                  Recent Transport Activities
-                </CardTitle>
-                <CardDescription>
-                  Latest transport requests and completions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
-                    { farmer: "Rajesh Kumar", crop: "Wheat", from: "Ludhiana", to: "Delhi", status: "Delivered", time: "2 hours ago" },
-                    { farmer: "Sunita Devi", crop: "Rice", from: "Karnal", to: "Chandigarh", status: "In Transit", time: "4 hours ago" },
-                    { farmer: "Mukesh Singh", crop: "Vegetables", from: "Hisar", to: "Gurgaon", status: "Picked Up", time: "6 hours ago" },
-                    { farmer: "Priya Sharma", crop: "Fruits", from: "Amritsar", to: "Jalandhar", status: "Requested", time: "8 hours ago" },
-                  ].map((activity, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-agrimove-purple/10">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="w-10 h-10">
-                          <AvatarFallback className="bg-agrimove-purple/20 text-agrimove-purple text-xs">
-                            {activity.farmer.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium">{activity.farmer}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {activity.crop} • {activity.from} → {activity.to}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <Badge 
-                          variant={
-                            activity.status === "Delivered" ? "default" :
-                            activity.status === "In Transit" ? "secondary" :
-                            activity.status === "Picked Up" ? "outline" :
-                            "destructive"
-                          }
-                          className="mb-1"
-                        >
-                          {activity.status}
-                        </Badge>
-                        <div className="text-xs text-muted-foreground">{activity.time}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </main>
         </SidebarInset>
       </div>
+
+      {/* Inbox Dialog */}
+      <Dialog open={isInboxOpen} onOpenChange={setIsInboxOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5" />
+              Inbox
+            </DialogTitle>
+            <DialogDescription>
+              Messages from truckers and transport updates
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+            {messages.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Mail className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No messages in your inbox</p>
+              </div>
+            ) : (
+              messages.map((message) => (
+                <div 
+                  key={message.id} 
+                  className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+                    message.read 
+                      ? 'bg-muted/30 border-border hover:bg-muted/50' 
+                      : 'bg-agrimove-purple/5 border-agrimove-purple/20 hover:bg-agrimove-purple/10'
+                  }`}
+                  onClick={() => markMessageAsRead(message.id)}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">
+                        From {message.fromRole}
+                      </Badge>
+                      {!message.read && (
+                        <Badge className="bg-agrimove-pink text-white">New</Badge>
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {message.timestamp.toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-sm mb-2">{message.content}</p>
+                  {message.ratePerKm && (
+                    <div className="flex items-center gap-4 text-sm bg-agrimove-green/10 p-2 rounded">
+                      <span className="font-medium text-agrimove-green">
+                        Rate: ₹{message.ratePerKm}/km
+                      </span>
+                      <span className="font-medium text-agrimove-purple">
+                        ETA: {message.estimatedTime}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   );
 }
