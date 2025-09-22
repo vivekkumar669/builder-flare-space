@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import { 
+import {
   BarChart3,
   TrendingUp,
   TrendingDown,
@@ -23,26 +23,85 @@ import {
   X,
   Plus,
   Send,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { ChartContainer, ChartConfig } from "@/components/ui/chart";
-import { AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 // Sample data for charts
 const impactData = [
-  { metric: "Cost Reduction", value: 25, target: 30, color: "hsl(var(--agrimove-green))" },
-  { metric: "Spoilage Reduction", value: 38, target: 40, color: "hsl(var(--agrimove-purple))" },
-  { metric: "Delivery Speed", value: 22, target: 25, color: "hsl(var(--agrimove-pink))" },
-  { metric: "Truck Utilization", value: 75, target: 85, color: "hsl(var(--agrimove-yellow))" }
+  {
+    metric: "Cost Reduction",
+    value: 25,
+    target: 30,
+    color: "hsl(var(--agrimove-green))",
+  },
+  {
+    metric: "Spoilage Reduction",
+    value: 38,
+    target: 40,
+    color: "hsl(var(--agrimove-purple))",
+  },
+  {
+    metric: "Delivery Speed",
+    value: 22,
+    target: 25,
+    color: "hsl(var(--agrimove-pink))",
+  },
+  {
+    metric: "Truck Utilization",
+    value: 75,
+    target: 85,
+    color: "hsl(var(--agrimove-yellow))",
+  },
 ];
 
 const monthlyData = [
@@ -51,7 +110,7 @@ const monthlyData = [
   { month: "Mar", farmers: 180, trips: 720, revenue: 68000 },
   { month: "Apr", farmers: 220, trips: 880, revenue: 78000 },
   { month: "May", farmers: 280, trips: 1120, revenue: 95000 },
-  { month: "Jun", farmers: 350, trips: 1400, revenue: 125000 }
+  { month: "Jun", farmers: 350, trips: 1400, revenue: 125000 },
 ];
 
 const regionData = [
@@ -59,7 +118,11 @@ const regionData = [
   { region: "Haryana", farmers: 380, color: "hsl(var(--agrimove-pink))" },
   { region: "UP", farmers: 320, color: "hsl(var(--agrimove-green))" },
   { region: "Rajasthan", farmers: 280, color: "hsl(var(--agrimove-yellow))" },
-  { region: "Gujarat", farmers: 220, color: "hsl(var(--agrimove-purple-light))" }
+  {
+    region: "Gujarat",
+    farmers: 220,
+    color: "hsl(var(--agrimove-purple-light))",
+  },
 ];
 
 const chartConfig = {
@@ -78,15 +141,20 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function FarmerDashboard() {
-  const { user, logout, messages, markMessageAsRead, farmerRequests } = useAuth();
+  const { user, logout, messages, markMessageAsRead, farmerRequests } =
+    useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
 
-  const unreadMessages = messages.filter(msg => !msg.read && msg.to === user?.id);
-  const myRequests = farmerRequests.filter(req => req.farmerId === user?.id);
-  const pendingRequests = myRequests.filter(req => req.status === 'pending');
-  const completedRequests = myRequests.filter(req => req.status === 'delivered');
+  const unreadMessages = messages.filter(
+    (msg) => !msg.read && msg.to === user?.id,
+  );
+  const myRequests = farmerRequests.filter((req) => req.farmerId === user?.id);
+  const pendingRequests = myRequests.filter((req) => req.status === "pending");
+  const completedRequests = myRequests.filter(
+    (req) => req.status === "delivered",
+  );
   const recentRequests = myRequests.slice(0, 3); // Show latest 3 requests
 
   const sidebarItems = [
@@ -100,13 +168,16 @@ export default function FarmerDashboard() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gradient-to-br from-agrimove-purple-light via-background to-agrimove-pink-light">
-        <Sidebar variant="inset" className="border-r border-agrimove-purple/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <Sidebar
+          variant="inset"
+          className="border-r border-agrimove-purple/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+        >
           <SidebarHeader className="border-b border-agrimove-purple/20 p-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-agrimove-purple to-agrimove-pink rounded-lg flex items-center justify-center">
@@ -116,7 +187,9 @@ export default function FarmerDashboard() {
                 <h1 className="text-xl font-bold bg-gradient-to-r from-agrimove-purple to-agrimove-pink bg-clip-text text-transparent">
                   AgriMove
                 </h1>
-                <p className="text-xs text-muted-foreground">Farmer Dashboard</p>
+                <p className="text-xs text-muted-foreground">
+                  Farmer Dashboard
+                </p>
               </div>
             </div>
           </SidebarHeader>
@@ -124,7 +197,7 @@ export default function FarmerDashboard() {
             <SidebarMenu>
               {sidebarItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton 
+                  <SidebarMenuButton
                     asChild={!item.action}
                     className="w-full justify-start gap-3 hover:bg-agrimove-purple/10 data-[active=true]:bg-agrimove-purple/20 data-[active=true]:text-agrimove-purple relative"
                     isActive={!!item.href && location.pathname === item.href}
@@ -134,11 +207,12 @@ export default function FarmerDashboard() {
                       <div className="flex items-center gap-3 cursor-pointer">
                         <item.icon className="w-4 h-4" />
                         <span>{item.label}</span>
-                        {item.label === "Inbox" && unreadMessages.length > 0 && (
-                          <Badge className="ml-auto bg-agrimove-pink text-white">
-                            {unreadMessages.length}
-                          </Badge>
-                        )}
+                        {item.label === "Inbox" &&
+                          unreadMessages.length > 0 && (
+                            <Badge className="ml-auto bg-agrimove-pink text-white">
+                              {unreadMessages.length}
+                            </Badge>
+                          )}
                       </div>
                     ) : (
                       <Link to={item.href!}>
@@ -150,7 +224,7 @@ export default function FarmerDashboard() {
                 </SidebarMenuItem>
               ))}
               <SidebarMenuItem>
-                <SidebarMenuButton 
+                <SidebarMenuButton
                   className="w-full justify-start gap-3 hover:bg-red-50 text-red-600 hover:text-red-700"
                   onClick={handleLogout}
                 >
@@ -168,7 +242,10 @@ export default function FarmerDashboard() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="flex items-center gap-2 flex-1">
               <h2 className="text-lg font-semibold">Farmer Dashboard</h2>
-              <Badge variant="secondary" className="bg-agrimove-green/10 text-agrimove-green border-agrimove-green/20">
+              <Badge
+                variant="secondary"
+                className="bg-agrimove-green/10 text-agrimove-green border-agrimove-green/20"
+              >
                 Welcome, {user?.name}
               </Badge>
             </div>
@@ -188,7 +265,10 @@ export default function FarmerDashboard() {
               </Button>
               <Avatar className="w-8 h-8">
                 <AvatarFallback className="bg-agrimove-green text-white text-xs">
-                  {user?.name?.split(' ').map(n => n[0]).join('') || 'F'}
+                  {user?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("") || "F"}
                 </AvatarFallback>
               </Avatar>
             </div>
@@ -199,11 +279,15 @@ export default function FarmerDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Requests</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Requests
+                  </CardTitle>
                   <Package className="w-4 h-4 text-agrimove-purple" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-purple">{myRequests.length}</div>
+                  <div className="text-2xl font-bold text-agrimove-purple">
+                    {myRequests.length}
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
                     {pendingRequests.length} pending requests
@@ -213,11 +297,15 @@ export default function FarmerDashboard() {
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Completed Deliveries</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Completed Deliveries
+                  </CardTitle>
                   <Truck className="w-4 h-4 text-agrimove-pink" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-pink">{completedRequests.length}</div>
+                  <div className="text-2xl font-bold text-agrimove-pink">
+                    {completedRequests.length}
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
                     Successful transports
@@ -227,11 +315,15 @@ export default function FarmerDashboard() {
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Messages</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Messages
+                  </CardTitle>
                   <Mail className="w-4 h-4 text-agrimove-green" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-green">{messages.length}</div>
+                  <div className="text-2xl font-bold text-agrimove-green">
+                    {messages.length}
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
                     {unreadMessages.length} unread messages
@@ -241,11 +333,15 @@ export default function FarmerDashboard() {
 
               <Card className="border-agrimove-purple/20 bg-background/90 backdrop-blur">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Account Status</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Account Status
+                  </CardTitle>
                   <Clock className="w-4 h-4 text-agrimove-yellow" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-agrimove-yellow">Active</div>
+                  <div className="text-2xl font-bold text-agrimove-yellow">
+                    Active
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-agrimove-green" />
                     All systems ready
@@ -262,13 +358,14 @@ export default function FarmerDashboard() {
                   Need Transport for Your Produce?
                 </CardTitle>
                 <CardDescription className="text-base">
-                  Submit a new transport request to connect with available truckers in your area.
+                  Submit a new transport request to connect with available
+                  truckers in your area.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button
-                    onClick={() => navigate('/farmer-requests')}
+                    onClick={() => navigate("/farmer-requests")}
                     className="flex-1 bg-gradient-to-r from-agrimove-green to-agrimove-green/80 hover:from-agrimove-green/90 hover:to-agrimove-green/70 text-white"
                     size="lg"
                   >
@@ -277,7 +374,7 @@ export default function FarmerDashboard() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => navigate('/farmer-requests')}
+                    onClick={() => navigate("/farmer-requests")}
                     className="flex-1 border-agrimove-green/30 hover:bg-agrimove-green/5"
                     size="lg"
                   >
@@ -317,25 +414,35 @@ export default function FarmerDashboard() {
                 <CardContent>
                   <ChartContainer config={chartConfig} className="h-[250px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={impactData.slice(0, 3)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                        <XAxis 
-                          dataKey="metric" 
+                      <BarChart
+                        data={impactData.slice(0, 3)}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="hsl(var(--border))"
+                        />
+                        <XAxis
+                          dataKey="metric"
                           stroke="hsl(var(--muted-foreground))"
                           tick={{ fontSize: 12 }}
                         />
-                        <YAxis 
+                        <YAxis
                           stroke="hsl(var(--muted-foreground))"
                           tick={{ fontSize: 12 }}
                         />
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: "hsl(var(--background))", 
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "hsl(var(--background))",
                             border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px"
+                            borderRadius: "8px",
                           }}
                         />
-                        <Bar dataKey="value" fill="hsl(var(--agrimove-green))" radius={[4, 4, 0, 0]} />
+                        <Bar
+                          dataKey="value"
+                          fill="hsl(var(--agrimove-green))"
+                          radius={[4, 4, 0, 0]}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -361,7 +468,7 @@ export default function FarmerDashboard() {
                           <p className="text-sm mb-2">No requests yet</p>
                           <Button
                             size="sm"
-                            onClick={() => navigate('/farmer-requests')}
+                            onClick={() => navigate("/farmer-requests")}
                             className="bg-agrimove-green hover:bg-agrimove-green/90 text-white"
                           >
                             <Plus className="w-3 h-3 mr-1" />
@@ -374,7 +481,7 @@ export default function FarmerDashboard() {
                         <div
                           key={request.id}
                           className="p-3 rounded-lg border border-agrimove-purple/10 bg-background/50 hover:bg-background/80 transition-colors cursor-pointer"
-                          onClick={() => navigate('/farmer-requests')}
+                          onClick={() => navigate("/farmer-requests")}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
@@ -382,16 +489,23 @@ export default function FarmerDashboard() {
                                 <Package className="w-4 h-4 text-agrimove-green" />
                               </div>
                               <div>
-                                <p className="font-medium text-sm">{request.cargoType}</p>
-                                <p className="text-xs text-muted-foreground">{request.weight} kg</p>
+                                <p className="font-medium text-sm">
+                                  {request.cargoType}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {request.weight} kg
+                                </p>
                               </div>
                             </div>
                             <Badge
                               className={`text-xs ${
-                                request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-                                request.status === 'accepted' ? 'bg-blue-100 text-blue-800 border-blue-300' :
-                                request.status === 'delivered' ? 'bg-green-100 text-green-800 border-green-300' :
-                                'bg-gray-100 text-gray-800 border-gray-300'
+                                request.status === "pending"
+                                  ? "bg-yellow-100 text-yellow-800 border-yellow-300"
+                                  : request.status === "accepted"
+                                    ? "bg-blue-100 text-blue-800 border-blue-300"
+                                    : request.status === "delivered"
+                                      ? "bg-green-100 text-green-800 border-green-300"
+                                      : "bg-gray-100 text-gray-800 border-gray-300"
                               }`}
                             >
                               {request.status.toUpperCase()}
@@ -399,9 +513,13 @@ export default function FarmerDashboard() {
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <MapPin className="w-3 h-3" />
-                            <span className="truncate">{request.pickupPoint}</span>
+                            <span className="truncate">
+                              {request.pickupPoint}
+                            </span>
                             <ArrowRight className="w-3 h-3" />
-                            <span className="truncate">{request.destination}</span>
+                            <span className="truncate">
+                              {request.destination}
+                            </span>
                           </div>
                           {request.truckerName && (
                             <div className="mt-2 text-xs text-agrimove-green">
@@ -417,7 +535,7 @@ export default function FarmerDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigate('/farmer-requests')}
+                        onClick={() => navigate("/farmer-requests")}
                         className="border-agrimove-purple/20 hover:bg-agrimove-purple/5"
                       >
                         View All Requests
@@ -452,22 +570,22 @@ export default function FarmerDashboard() {
               </div>
             ) : (
               messages.map((message) => (
-                <div 
-                  key={message.id} 
+                <div
+                  key={message.id}
                   className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                    message.read 
-                      ? 'bg-muted/30 border-border hover:bg-muted/50' 
-                      : 'bg-agrimove-purple/5 border-agrimove-purple/20 hover:bg-agrimove-purple/10'
+                    message.read
+                      ? "bg-muted/30 border-border hover:bg-muted/50"
+                      : "bg-agrimove-purple/5 border-agrimove-purple/20 hover:bg-agrimove-purple/10"
                   }`}
                   onClick={() => markMessageAsRead(message.id)}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline">
-                        From {message.fromRole}
-                      </Badge>
+                      <Badge variant="outline">From {message.fromRole}</Badge>
                       {!message.read && (
-                        <Badge className="bg-agrimove-pink text-white">New</Badge>
+                        <Badge className="bg-agrimove-pink text-white">
+                          New
+                        </Badge>
                       )}
                     </div>
                     <span className="text-xs text-muted-foreground">
