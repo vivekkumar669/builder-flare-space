@@ -27,11 +27,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function TruckerDashboard() {
   const { user, logout, farmerRequests, acceptRequest } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   const [ratePerKm, setRatePerKm] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
@@ -100,15 +101,15 @@ export default function TruckerDashboard() {
             <SidebarMenu>
               {sidebarItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton 
+                  <SidebarMenuButton
                     asChild
                     className="w-full justify-start gap-3 hover:bg-agrimove-purple/10 data-[active=true]:bg-agrimove-purple/20 data-[active=true]:text-agrimove-purple"
-                    isActive={item.href === "/trucker-dashboard"}
+                    isActive={location.pathname === item.href}
                   >
-                    <a href={item.href}>
+                    <Link to={item.href}>
                       <item.icon className="w-4 h-4" />
                       <span>{item.label}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
