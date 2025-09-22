@@ -1,12 +1,13 @@
 import * as React from "react";
 import { useLocation } from "react-router-dom";
-import { 
+import {
   Construction,
   ArrowLeft,
   Truck
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function Placeholder() {
   const location = useLocation();
@@ -44,14 +45,14 @@ export default function Placeholder() {
               charts, and transport analytics that help optimize agricultural logistics.
             </p>
             
-            <Button 
-              asChild 
+            <Button
+              asChild
               className="bg-gradient-to-r from-agrimove-purple to-agrimove-pink hover:from-agrimove-purple/90 hover:to-agrimove-pink/90 text-white"
             >
-              <a href="/" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <ArrowLeft className="w-4 h-4" />
                 Back to Dashboard
-              </a>
+              </Link>
             </Button>
           </div>
         </CardContent>
