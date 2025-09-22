@@ -35,7 +35,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 // Sample data for charts
 const impactData = [
@@ -80,6 +80,7 @@ const chartConfig = {
 export default function FarmerDashboard() {
   const { user, logout, messages, markMessageAsRead, farmerRequests } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
 
   const unreadMessages = messages.filter(msg => !msg.read && msg.to === user?.id);
@@ -126,7 +127,7 @@ export default function FarmerDashboard() {
                   <SidebarMenuButton 
                     asChild={!item.action}
                     className="w-full justify-start gap-3 hover:bg-agrimove-purple/10 data-[active=true]:bg-agrimove-purple/20 data-[active=true]:text-agrimove-purple relative"
-                    isActive={item.href === "/farmer-dashboard"}
+                    isActive={!!item.href && location.pathname === item.href}
                     onClick={item.action}
                   >
                     {item.action ? (
@@ -140,10 +141,10 @@ export default function FarmerDashboard() {
                         )}
                       </div>
                     ) : (
-                      <a href={item.href}>
+                      <Link to={item.href!}>
                         <item.icon className="w-4 h-4" />
                         <span>{item.label}</span>
-                      </a>
+                      </Link>
                     )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
